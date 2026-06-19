@@ -1,19 +1,16 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h> // Needed for string comparison (strcmp)
 
-// Function to solve the quadratic equation ax^2 + bx + c = 0
 void solveQuadratic(double a, double b, double c) {
-    // Edge case: If 'a' is 0, it's a linear equation, not quadratic
     if (a == 0) {
-        printf("Error: 'a' cannot be 0 in a quadratic equation.\n");
+        printf("\nError: 'a' cannot be 0 in a quadratic equation.\n");
         return;
     }
 
-    // Calculate the discriminant
     double discriminant = b * b - 4 * a * c;
     double root1, root2;
 
-    // Case 1: Discriminant is positive (Two distinct real roots)
     if (discriminant > 0) {
         root1 = (-b + sqrt(discriminant)) / (2 * a);
         root2 = (-b - sqrt(discriminant)) / (2 * a);
@@ -22,14 +19,12 @@ void solveQuadratic(double a, double b, double c) {
         printf("Root 1 = %.2lf\n", root1);
         printf("Root 2 = %.2lf\n", root2);
     } 
-    // Case 2: Discriminant is zero (Two equal real roots)
     else if (discriminant == 0) {
         root1 = -b / (2 * a);
         
         printf("The roots are real and equal:\n");
         printf("Root 1 = Root 2 = %.2lf\n", root1);
     } 
-    // Case 3: Discriminant is negative (Two complex roots)
     else {
         double realPart = -b / (2 * a);
         double imaginaryPart = sqrt(-discriminant) / (2 * a);
@@ -42,17 +37,39 @@ void solveQuadratic(double a, double b, double c) {
 
 int main() {
     double a, b, c;
+    int inputsRead;
+    char input[100]; // Create a text buffer to hold up to 100 characters
 
-    // Ask the user for inputs
-    printf("Enter coefficients a, b, and c: ");
-    scanf("%lf %lf %lf", &a, &b, &c);
+    while (1) {
+        printf("Enter coefficients a, b, and c (e.g., 1 -5 6): ");
+        
+        // 1. Read the entire line of input as text
+        fgets(input, sizeof(input), stdin);
+
+        // Remove the 'Enter' key (\n) from the end of the text
+        input[strcspn(input, "\n")] = 0;
+
+        // 2. EASTER EGG CHECK: Did they type "i love you"?
+        if (strcmp(input, "i love you") == 0 || strcmp(input, "I love you") == 0) {
+            printf("\n[ERROR] Aww, I appreciate it! But I am just a math program. Please give me numbers!\n\n");
+            continue; // Skip the rest of the loop and ask again
+        }
+
+        // 3. If it wasn't the secret phrase, try to extract 3 numbers from the text
+        inputsRead = sscanf(input, "%lf %lf %lf", &a, &b, &c);
+
+        if (inputsRead == 3) {
+            break; // Success! We got 3 numbers, escape the loop.
+        } 
+        
+        // 4. Standard error for any other invalid text
+        printf("\n[ERROR] Invalid input detected! Please enter numbers only.\n\n");
+    }
 
     printf("\nSolving equation: %.2lfx^2 + %.2lfx + %.2lf = 0\n", a, b, c);
     printf("-------------------------------------------------\n");
     
-    // Call the function
     solveQuadratic(a, b, c);
 
     return 0;
 }
-
